@@ -1,8 +1,9 @@
-package main
+package stdout
 
 import (
 	"fmt"
 	"strconv"
+	"strings"
 
 	"github.com/shopspring/decimal"
 )
@@ -64,7 +65,7 @@ func (t *Table) Print() {
 
 	// data rows
 	for _, d := range t.Data {
-		fmt.Printf(rowFormat, d.Name, d.Amount.String())
+		fmt.Printf(rowFormat, d.Name, prettyAmount(d.Amount))
 	}
 
 	// ending bar
@@ -74,4 +75,12 @@ func (t *Table) Print() {
 		i++
 	}
 	fmt.Println("\n")
+}
+
+func prettyAmount(amount decimal.Decimal) string {
+	amountStr := amount.StringFixed(2)
+	if !strings.HasSuffix(amountStr, "00") {
+		return amountStr
+	}
+	return strings.TrimSuffix(amountStr, "00") + "  "
 }

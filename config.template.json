@@ -1,0 +1,82 @@
+{
+	"paydays": [
+		{
+			"frequency": "semimonthly",
+			"amount": 1000
+		}
+	],
+	"charities": [
+		{
+			"name": "Tithe",
+			"percentage": 0.1
+		}
+	],
+	"savings": [
+		{
+			"name": "College Savings",
+			"amount": 50
+		}
+	],
+	"expenses": [
+		{
+			"name": "Groceries",
+			"amount": 200
+		},
+		{
+			"name": "Eating Out",
+			"amount": 30
+		},
+		{
+			"name": "Fuel",
+			"amount": 100
+		},
+		{
+			"name": "Clothes",
+			"amount": 50
+		},
+		{
+			"name": "Fun and Trips",
+			"amount": 50
+		},
+		{
+			"name": "Car Maintenance",
+			"amount": 50
+		},
+		{
+			"name": "Yard/Home Improvement",
+			"amount": 50
+		}
+	],
+	"bills": [
+		{
+			"name": "Rent",
+			"dueOnDay": 1,
+			"amount": 400
+		},
+		{
+			"name": "Electricity",
+			"amount": 75,
+			"dueOnDay": 9
+		},
+		{
+			"name": "Water",
+			"amount": 25,
+			"dueOnDay": 14
+		},
+		{
+			"name": "Internet",
+			"amount": 40,
+			"dueOnDay": 15
+		},
+		{
+			"name": "Auto Insurance",
+			"amount": 120,
+			"dueOnDay": 23
+		},
+		{
+			"name": "Cell Phone",
+			"amount": 40,
+			"dueOnDay": 28
+		}
+	]
+}

@@ -10,15 +10,17 @@ import (
 	"strings"
 	"time"
 
+	"github.com/hjkelly/payday-calculator/stdout"
 	"github.com/shopspring/decimal"
 )
 
 // MODELS =====================================================================
 
 type Config struct {
-	Paydays  []Payday  `json:"paydays"`
-	Expenses []Expense `json:"expenses"`
-	Bills    []Bill    `json:"bills"`
+	Paydays   []Payday  `json:"paydays"`
+	Charities []Charity `json:"charities"`
+	Expenses  []Expense `json:"expenses"`
+	Bills     []Bill    `json:"bills"`
 }
 
 type Payday struct {
@@ -32,6 +34,12 @@ const (
 	SemimonthlyFirstHalfStart  = 1
 	SemimonthlySecondHalfStart = 15
 )
+
+type Charity struct {
+	Name       string          `json:"name"`
+	Amount     decimal.Decimal `json:"amount"`
+	Percentage decimal.Decimal `json:"percentage"`
+}
 
 type Expense struct {
 	Name    string          `json:"name"`
@@ -119,12 +127,25 @@ func main() {
 		income = parsedIncome
 	}
 
-	// calculate giving
-	//totalGiving := decimal.NewFromFloat(0)
+	// calculate giving/charities
+	table := stdout.NewTable("CHARITIES", "Name", "Amount")
+	charityTotal := decimal.NewFromFloat(0)
+	for _, charity := range config.Charities {
+		// calculate the amount
+		actualAmount := charity.Amount
+		if !charity.Percentage.IsZero() {
+			actualAmount = income.Mul(charity.Percentage)
+		}
+		// increase the total
+		charityTotal = charityTotal.Add(actualAmount)
+		// get it ready for output
+		table.AddRow(charity.Name, actualAmount)
+	}
+	table.Print()
 
 	// get half of expenses ----------
 	// loop through expenses, collecting the total amount and getting a table ready for output
-	table := NewTable("EXPENSES", "Name", "Amount")
+	table = stdout.NewTable("EXPENSES", "Name", "Amount")
 	expenseTotal := decimal.NewFromFloat(0)
 	percentage := decimal.NewFromFloat(0.5)
 	for _, expense := range config.Expenses {
@@ -154,7 +175,7 @@ func main() {
 			}
 		}
 	}
-	table = NewTable("BILLS DUE", "Name", "Amount")
+	table = stdout.NewTable("BILLS DUE", "Name", "Amount")
 	// loop through expenses, collecting the total amount and getting a table ready for output
 	billTotal := decimal.NewFromFloat(0)
 	for _, bill := range bills {
@@ -167,7 +188,7 @@ func main() {
 	// TODO 06
 
 	// provide savings leftovers (or what needs to be stolen from emergency fund)
-	balance := income.Sub(expenseTotal).Sub(billTotal)
+	balance := income.Sub(charityTotal).Sub(expenseTotal).Sub(billTotal)
 	if balance.IsPositive() {
 		fmt.Printf("This much is left over to save: %s\n", balance.String())
 	} else if balance.IsNegative() {
